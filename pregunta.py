@@ -34,10 +34,25 @@ def create_dataset_csv(base_path, output_filename):
             
             # Añadimos la frase y el sentimiento al dataset
             rows.append({'phrase': phrase, 'sentiment': sentiment})
-    
-    # Convertimos la lista de tuplas a un dataframe y guardamos
+
+    # Convertimos la lista de tuplas a un dataframe
     df = pd.DataFrame(rows, columns=['phrase', 'sentiment'])
+    
+    # Encontramos los índices del primer registro de cada valor en 'sentiment' ya que son problemáticos
+    first_indices = df.groupby('sentiment').head(1).index
+    # Eliminamos esos índices
+    df = df.drop(first_indices)
+    
+    # Guardamos
     df.to_csv(output_filename, index=False)
 
 create_dataset_csv('train', 'train_dataset.csv')
 create_dataset_csv('test', 'test_dataset.csv')
+
+# df = pd.read_csv('train_dataset.csv')
+# print(df["sentiment"].value_counts())
+
+
+# df2 = pd.read_csv('test_dataset.csv')
+# print(df2["sentiment"].value_counts())
+
